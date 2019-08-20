@@ -1,0 +1,22 @@
+sudo: required
+services:
+  - docker
+
+before_install:
+  - docker build -t essn/react-test -f ./client/Dockerfile.dev ./client
+
+script:
+  - docker run essn/react-test npm test -- --coverage
+
+after_success:
+  - docker build -t essn/multi-client ./client
+  - docker build -t essn/multi-nginx ./nginx
+  - docker build -t essn/multi-server ./server
+  - docker build -t essn/multi-worker ./worker
+  - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_ID" --password-stdin
+  - docker push essn/multi-client
+  - docker push essn/multi-nginx
+  - docker push essn/multi-server
+  - docker push essn/multi-worker
+
+
