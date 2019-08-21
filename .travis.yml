@@ -9,11 +9,11 @@ script:
   - docker run essn/react-test npm test -- --coverage
 
 after_success:
+  - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_ID" --password-stdin
   - docker build -t essn/multi-client ./client
   - docker build -t essn/multi-nginx ./nginx
   - docker build -t essn/multi-server ./server
   - docker build -t essn/multi-worker ./worker
-  - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_ID" --password-stdin
   - docker push essn/multi-client
   - docker push essn/multi-nginx
   - docker push essn/multi-server
